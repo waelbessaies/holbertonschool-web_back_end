@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-module 
+module
 """
 import asyncio
 from typing import List
