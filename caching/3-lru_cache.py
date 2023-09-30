@@ -2,7 +2,7 @@
 """
 LRU Caching
 """
-BaseCaching = __import__('base_caching').BaseCaching
+from base_caching import BaseCaching
 
 
 class LRUCache(BaseCaching):
@@ -17,13 +17,22 @@ class LRUCache(BaseCaching):
         self.handle(self.head, self.tail)
 
     def handle(self, head, tail):
+        """
+        handle elements
+        """
         self.next[head], self.prev[tail] = tail, head
 
     def _remove(self, key):
+        """
+        remove element
+        """
         self.handle(self.prev[key], self.next[key])
         del self.prev[key], self.next[key], self.cache_data[key]
 
     def _add(self, key, item):
+        """
+        add element
+        """
         self.cache_data[key] = item
         self.handle(self.prev[self.tail], key)
         self.handle(key, self.tail)
@@ -32,12 +41,18 @@ class LRUCache(BaseCaching):
             self._remove(self.next[self.head])
 
     def put(self, key, item):
+        """
+        dictionary
+        """
         if key and item:
             if key in self.cache_data:
                 self._remove(key)
             self._add(key, item)
 
     def get(self, key):
+        """
+        Return the value linked
+        """
         if key is None or self.cache_data.get(key) is None:
             return None
         if key in self.cache_data:
