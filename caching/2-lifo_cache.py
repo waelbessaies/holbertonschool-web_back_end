@@ -11,9 +11,15 @@ class LIFOCache(BaseCaching):
     """
 
     def __init__(self):
+        """
+        overload
+        """
         super().__init__()
 
     def put(self, key, item):
+        """
+        dictionary
+        """
         if key and item:
             self.cache_data[key] = item
         if len(self.cache_data) > BaseCaching.MAX_ITEMS:
@@ -25,6 +31,9 @@ class LIFOCache(BaseCaching):
             pass
 
     def get(self, key):
+        """
+        get value of key from dict
+        """
         if key is None:
             return None
         return self.cache_data.get(key)
