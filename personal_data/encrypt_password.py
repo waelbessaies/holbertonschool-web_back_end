@@ -1,33 +1,34 @@
 #!/usr/bin/env python3
-import bcrypt  # Import the bcrypt library for password hashing
+"""
+Encrypting passwords
+"""
+import bcrypt
 
 
 def hash_password(password: str) -> bytes:
     """
-    Hashes a password using bcrypt.
-
+    Performs a password hashing using the `bcrypt` package
     Args:
-        password (str): The plaintext password to be hashed.
-
+    ----
+        password: string type to be hashed
     Returns:
-        bytes: A salted, hashed password, represented as a byte string.
+    -------
+        a salted, hashed password, which is a byte string.
     """
-    # Encode the plaintext password as bytes
     p = password.encode()
-    # Generate a salt and hash the password using bcrypt
     return bcrypt.hashpw(p, bcrypt.gensalt())
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
     """
-    Validates a password against its hashed counterpart using bcrypt.
-
+    Uses `bcrypt` to validate that the provided password matches
+    the hashed password.
     Args:
-        hashed_password (bytes): The previously hashed password.
-        password (str): The plaintext password to be validated.
-
+    ----
+        hashed_password: bytes type to compare with password
+        password: string type to compare with hashed_password
     Returns:
-        bool: True if the plaintext password matches the hashed password, False otherwise.
+    -------
+        True or False
     """
-    # Encode the plaintext password as bytes and compare it with the hashed password
     return bcrypt.checkpw(password.encode(), hashed_password)

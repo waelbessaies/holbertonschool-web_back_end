@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
-
+"""
+Module for filtered_logger
+"""
 import re
 import logging
 import os
 import mysql.connector
 from typing import List
 
-# Define Personally Identifiable Information (PII) fields to redact in log messages
-PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
-# Custom Formatter class for redacting PII in log messages
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Custom log formatter to redact sensitive information """
+    """ Redacting Formatter class """
 
-    # Redacted text to replace PII
     REDACTION = "***"
-
-    # Log message format
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
-
-    # Separator between fields in log message
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
@@ -36,36 +31,31 @@ class RedactingFormatter(logging.Formatter):
         return filter_datum(self.fields, self.REDACTION,
                             super().format(record), self.SEPARATOR)
 
-# Function to redact PII in a log message
-
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
-    Redacts specified fields in a log message.
-
     Args:
-        fields: List of PII fields to obfuscate
-        redaction: Represents the text by which the field will be obfuscated
-        message: The log message to redact
-        separator: String used to separate fields in the log message
-
+        fields:       fields to obfuscate
+        redaction:    represents by what the field will be obfuscated
+        message:      the log line
+        separator:    string by which character is separating all fields
+                      in the log line (message)
     Returns:
-        Protected log message with redacted PII
+    -------
+        Protected log message
     """
     for field in fields:
         message = re.sub(rf"{field}=.*?{separator}",
                          f"{field}={redaction}{separator}", message)
     return message
 
-# Function to create and configure the logger
-
 
 def get_logger() -> logging.Logger:
     """
-    Creates and configures a logger for the user_data module.
-
+    Instantiates a logging class
     Returns:
+    -------
         logging.Logger object
     """
     logger = logging.getLogger("user_data")
@@ -76,14 +66,12 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
     return logger
 
-# Function to establish a database connection
-
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """
-    Establishes a connection to the database.
-
+    Instantiates a mysql.connector.connection class
     Returns:
+    -------
         mysql.connector.connection.MySQLConnection object connector
     """
     config = {
@@ -95,13 +83,18 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     connector = mysql.connector.connect(**config)
     return connector
 
-# Main function to retrieve and log user data while redacting PII
-
 
 def main():
     """
-    Main function to connect to the database, retrieve user records,
-    and log them with redacted PII.
+    Connects to the database `my_db` using `get_db` function, retrieves all
+    rows in the `users` table and display each row under a filtered format.
+    Filtered PII fields: name, email, phone, ssn, and password.
+    Format example:
+        [HOLBERTON] user_data INFO 2019-11-19 18:37:59,596: name=***;
+        email=***; phone=***; ssn=***; password=***;
+        ip=e848:e856:4e0b:a056:54ad:1e98:8110:ce1b;
+        last_login=2019-11-14T06:16:24; user_agent=Mozilla/5.0
+        (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; KTXN);
     """
     db = get_db()
     cursor = db.cursor()
