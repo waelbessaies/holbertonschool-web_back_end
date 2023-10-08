@@ -8,7 +8,9 @@ from os import getenv
 
 
 class SessionExpAuth(SessionAuth):
-    """ My class SessionExpAuth
+    """  Empty session
+    Args:
+        Auth (_class_): inherits from class Auth
     """
 
     def __init__(self):
