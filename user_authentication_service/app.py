@@ -14,17 +14,19 @@ def hello_world():
     return jsonify({"message": "Bienvenue"})
 
 
-@app.route('/users', methods=['POST'], strict_slashes=False)
-def users() -> str:
-    """ Handle user registration.
-    """
-    email = request.form.get('email')
-    password = request.form.get('password')
+@app.route('/users', methods=['POST'])
+def register_user():
     try:
-        AUTH.register_user(email, password)
-        return jsonify({'email': email, 'message': 'User created'})
-    except ValueError:
-        return jsonify({"message": "Email already registered"}, 400)
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        new_user = AUTH.register_user(email, password)
+
+        response = {"email": new_user.email, "message": "user created"}
+        return jsonify(response)
+    except ValueError as err:
+        response = {"message": str(err)}
+        return jsonify(response), 400
 
 
 @app.route("/sessions", methods=["POST"])
