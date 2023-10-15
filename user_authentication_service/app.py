@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-""" 
-This script defines API endpoints for user authentication.
+""" This script defines API endpoints for user authentication.
 """
 
 from flask import Flask, jsonify, redirect, request, abort
@@ -12,16 +11,14 @@ AUTH = Auth()
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def root() -> str:
-    """ 
-    Handle root endpoint, returning a welcome message.
+    """ Handle root endpoint, returning a welcome message.
     """
     return jsonify({'message': 'Welcome'})
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def users() -> str:
-    """ 
-    Handle user registration.
+    """ Handle user registration.
     """
     email = request.form.get('email')
     password = request.form.get('password')
@@ -34,8 +31,7 @@ def users() -> str:
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
-    """ 
-    Handle user login and session creation.
+    """ Handle user login and session creation.
     """
     email = request.form.get('email')
     password = request.form.get('password')
@@ -52,8 +48,7 @@ def login() -> str:
 
 @app.route('/sessions', methods=['DELETE'])
 def logout() -> str:
-    """ 
-    Handle user logout and session termination.
+    """ Handle user logout and session termination.
     """
     session_id = request.cookies.get("session_id")
     if not session_id:
@@ -67,8 +62,7 @@ def logout() -> str:
 
 @app.route('/profile', methods=['GET'])
 def profile() -> str:
-    """ 
-    Retrieve user profile information.
+    """ Retrieve user profile information.
     """
     session_id = request.cookies.get("session_id", None)
     if session_id is None:
@@ -82,8 +76,7 @@ def profile() -> str:
 
 @app.route('/reset_password', methods=['POST'])
 def reset_password() -> str:
-    """ 
-    Handle password reset request.
+    """ Handle password reset request.
     """
     try:
         email = request.form.get('email')
@@ -99,8 +92,7 @@ def reset_password() -> str:
 
 @app.route('/reset_password', methods=['PUT'], strict_slashes=True)
 def update_password() -> str:
-    """ 
-    Handle password update after a reset request.
+    """ Handle password update after a reset request.
     """
     try:
         email = request.form.get('email')
