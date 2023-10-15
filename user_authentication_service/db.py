@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-""" 
-This module provides database functionality for user management.
-"""
+""" This module provides database functionality for user management."""
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -12,13 +10,11 @@ from user import Base, User
 
 
 class DB:
-    """ 
-    DB class for managing the database operations.
+    """ DB class for managing the database operations.
     """
 
     def __init__(self):
-        """ 
-        Initialize the DB class and create a database.
+        """ Initialize the DB class and create a database.
         """
         self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
@@ -27,8 +23,7 @@ class DB:
 
     @property
     def _session(self) -> Session:
-        """ 
-        Memoized session object for database operations.
+        """ Memoized session object for database operations.
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -36,8 +31,7 @@ class DB:
         return self.__session
 
     def add_user(self, email, hashed_password) -> User:
-        """ 
-        Add a user to the database with the provided email and hashed password.
+        """ Add a user
         """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
@@ -45,8 +39,7 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """ 
-        Find a user in the database based on provided criteria.
+        """ Find a user in the database based on provided criteria.
         """
         try:
             record = self._session.query(User).filter_by(**kwargs).first()
@@ -57,8 +50,7 @@ class DB:
         return record
 
     def update_user(self, user_id: int, **kwargs) -> None:
-        """ 
-        Update user information in the database.
+        """ Update user information in the database.
         """
         usr = self.find_user_by(id=user_id)
         for key, value in kwargs.items():
