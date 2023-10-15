@@ -1,40 +1,43 @@
 #!/usr/bin/env python3
-"""DB module
+""" 
+This module provides database functionality for user management.
 """
+
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
-from typing import TypeVar
-from user import Base
-from user import User
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
+from user import Base, User
 
 
 class DB:
-    """DB class
+    """ 
+    DB class for managing the database operations.
     """
 
-    def __init__(self) -> None:
-        """Initialize a new DB instance
+    def __init__(self):
+        """ 
+        Initialize the DB class and create a database.
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
     def _session(self) -> Session:
-        """Memoized session object
+        """ 
+        Memoized session object for database operations.
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> User:
-        """ Adds user to database
+    def add_user(self, email, hashed_password) -> User:
+        """ 
+        Add a user to the database with the provided email and hashed password.
         """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
@@ -42,19 +45,24 @@ class DB:
         return user
 
     def find_user_by(self, **kwargs) -> User:
-        """ Finds user by key word args
+        """ 
+        Find a user in the database based on provided criteria.
         """
-        if not kwargs:
+        try:
+            record = self._session.query(User).filter_by(**kwargs).first()
+        except TypeError:
             raise InvalidRequestError
-
-        column_names = User.__table__.columns.keys()
-        for key in kwargs.keys():
-            if key not in column_names:
-                raise InvalidRequestError
-
-        user = self._session.query(User).filter_by(**kwargs).first()
-
-        if user is None:
+        if record is None:
             raise NoResultFound
+        return record
 
-        return user
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ 
+        Update user information in the database.
+        """
+        usr = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            if not hasattr(usr, key):
+                raise ValueError
+            setattr(usr, key, value)
+        self._session.commit()
