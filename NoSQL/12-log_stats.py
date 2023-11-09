@@ -4,7 +4,6 @@ Python function that changes all topics of a school document based on the name
 """
 from pymongo import MongoClient
 
-# Connect to MongoDB
 client = MongoClient(
     'mongodb://your_username:your_password@your_host:your_port/')
 
